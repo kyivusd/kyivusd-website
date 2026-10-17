@@ -3,210 +3,531 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KyivUSD - Моніторинг курсів валют</title>
+    <title>KyivUSD - Калькулятор валют</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: white;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --accent: #0088cc;
+            --border: #e2e8f0;
+            --feature-bg: #f7fafc;
+            --control-bg: #f7fafc;
+        }
+        
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --card-bg: #0f3460;
+            --text-primary: #eaeaea;
+            --text-secondary: #b8b8b8;
+            --accent: #00d4ff;
+            --border: #2a2a4a;
+            --feature-bg: #1a1a3e;
+            --control-bg: #2a2a4a;
+        }
+        
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333; 
+            background: var(--bg-gradient);
+            color: var(--text-primary); 
             min-height: 100vh; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             padding: 20px;
+            transition: all 0.3s ease;
         }
+        
         .container { 
-            background: white; 
-            padding: 50px 40px; 
-            border-radius: 20px; 
+            background: var(--card-bg); 
+            padding: 40px 25px; 
+            border-radius: 24px; 
             box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
             max-width: 500px; 
             width: 100%;
             text-align: center;
+            animation: fadeInUp 0.6s ease;
+            position: relative;
         }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .top-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            background: var(--control-bg);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+        
+        .control-btn:hover { transform: scale(1.1); border-color: var(--accent); }
+        
         .logo { 
-            width: 80px; 
-            height: 80px; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 90px; height: 90px; 
+            background: var(--bg-gradient);
             border-radius: 50%; 
-            margin: 0 auto 25px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: white; 
-            font-size: 36px; 
-            font-weight: bold;
+            margin: 0 auto 20px; 
+            display: flex; align-items: center; justify-content: center; 
+            color: white; font-size: 42px; font-weight: bold;
         }
-        h1 { 
-            margin: 0 0 15px; 
-            font-size: 32px; 
-            color: #2d3748;
-            font-weight: 700;
-        }
+        
+        h1 { margin: 0 0 10px; font-size: 32px; font-weight: 700; }
+        
         .description { 
-            color: #4a5568; 
-            margin: 0 0 30px; 
-            font-size: 16px; 
+            color: var(--text-secondary); 
+            margin: 0 0 25px; 
+            font-size: 15px; 
             line-height: 1.6;
         }
+        
+        .calculator {
+            background: var(--feature-bg);
+            border-radius: 16px;
+            padding: 22px 18px;
+            margin: 20px 0;
+            border: 2px solid var(--border);
+            text-align: left;
+        }
+        
+        .calc-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        
+        .calc-block {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .calc-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .calc-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .calc-row:last-child { margin-bottom: 0; }
+        
+        .calc-select, .calc-input {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            background: var(--feature-bg);
+            color: var(--text-primary);
+        }
+        
+        .calc-select { flex: 1; cursor: pointer; }
+        .calc-input { flex: 1; }
+        
+        .calc-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+        
+        .calc-arrow {
+            text-align: center;
+            font-size: 22px;
+            color: var(--accent);
+            margin: 4px 0;
+        }
+        
+        .calc-result {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 15px;
+            padding: 18px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 2px solid var(--accent);
+            text-align: center;
+            word-break: break-word;
+        }
+        
+        .calc-result-secondary {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .calc-hint {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 12px;
+            font-style: italic;
+        }
+        
         .features {
             text-align: left;
             margin: 25px 0;
             padding: 20px;
-            background: #f7fafc;
-            border-radius: 12px;
+            background: var(--feature-bg);
+            border-radius: 16px;
         }
+        
         .feature-item {
             display: flex;
             align-items: center;
-            margin: 12px 0;
+            margin: 14px 0;
             font-size: 15px;
-            color: #2d3748;
+            animation: slideIn 0.5s ease both;
         }
-        .feature-icon {
-            font-size: 20px;
-            margin-right: 12px;
-            min-width: 24px;
+        
+        .feature-item:nth-child(1) { animation-delay: 0.1s; }
+        .feature-item:nth-child(2) { animation-delay: 0.2s; }
+        .feature-item:nth-child(3) { animation-delay: 0.3s; }
+        .feature-item:nth-child(4) { animation-delay: 0.4s; }
+        .feature-item:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
+        
+        .feature-icon { font-size: 22px; margin-right: 14px; min-width: 28px; }
+        
         .telegram-btn { 
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin-top: 20px; 
+            margin-top: 15px; 
             padding: 16px 40px; 
             background: linear-gradient(135deg, #0088cc 0%, #0066aa 100%);
             color: white; 
             text-decoration: none; 
-            border-radius: 12px; 
+            border-radius: 14px; 
             font-weight: 600; 
-            font-size: 18px;
+            font-size: 17px;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
         }
+        
         .telegram-btn:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
-        }
-        .telegram-icon {
-            margin-right: 10px;
-            font-size: 22px;
-        }
-        .lang-indicator {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.9);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #4a5568;
-            font-weight: 500;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0, 136, 204, 0.5);
         }
     </style>
 </head>
 <body>
-    <div class="lang-indicator" id="langIndicator">🌍 ...</div>
-    
     <div class="container">
-        <div class="logo">$</div>
-        
-        <div id="content">
-            <!-- Контент будет загружен через JavaScript -->
+        <div class="top-controls">
+            <button class="control-btn" id="themeToggle">🌙</button>
+            <button class="control-btn" id="langToggle">🌍</button>
         </div>
+        
+        <div class="logo">$</div>
+        <div id="content"></div>
     </div>
 
     <script>
-        // Тексты на двух языках
+        // 1 тройська унція = 31.1035 грама
+        const GRAMS_PER_TROY_OZ = 31.1035;
+
         const translations = {
             uk: {
                 title: "KyivUSD",
-                description: "Актуальний моніторинг курсів валют в Україні. Отримуйте точну інформацію про курси долара, євро та інших валют у реальному часі.",
+                description: "Калькулятор конвертації валют та активів. Введіть актуальні курси та отримайте точний результат.",
+                calcTitle: "Калькулятор конвертації",
+                from: "З:",
+                to: "В:",
+                rateUAH: "Курс у грн",
+                rateUSD: "Курс у $",
+                hint: "💡 USD та EUR — курс у гривнях, інше — у доларах. Золото — ціна за унцію, кількість у грамах",
                 features: [
-                    { icon: "📊", text: "Курси валют у реальному часі" },
-                    { icon: "💱", text: "USD, EUR та інші валюти" },
-                    { icon: "🔔", text: "Миттєві сповіщення про зміни" },
+                    { icon: "📊", text: "Будь-які валюти та активи" },
+                    { icon: "💱", text: "USD, EUR, Bitcoin, Gold, S&P 500" },
+                    { icon: "📅", text: "Оновлення раз на місяць — без спаму" },
+                    { icon: "🔕", text: "Жодних зайвих повідомлень" },
                     { icon: "📱", text: "Зручний Telegram-канал" }
                 ],
                 button: "Підписатися в Telegram",
-                langName: "Українська"
+                langName: "UA"
             },
             en: {
                 title: "KyivUSD",
-                description: "Real-time currency exchange rate monitoring in Ukraine. Get accurate information about USD, EUR and other currency rates instantly.",
+                description: "Currency and asset conversion calculator. Enter current rates and get accurate results.",
+                calcTitle: "Conversion Calculator",
+                from: "From:",
+                to: "To:",
+                rateUAH: "Rate in UAH",
+                rateUSD: "Rate in USD",
+                hint: "💡 USD and EUR — rate in UAH, others — in USD. Gold — price per oz, amount in grams",
                 features: [
-                    { icon: "📊", text: "Real-time currency rates" },
-                    { icon: "💱", text: "USD, EUR and other currencies" },
-                    { icon: "🔔", text: "Instant change notifications" },
+                    { icon: "📊", text: "Any currencies and assets" },
+                    { icon: "💱", text: "USD, EUR, Bitcoin, Gold, S&P 500" },
+                    { icon: "📅", text: "Monthly updates — no spam" },
+                    { icon: "🔕", text: "No extra notifications" },
                     { icon: "📱", text: "Convenient Telegram channel" }
                 ],
                 button: "Subscribe on Telegram",
-                langName: "English"
+                langName: "EN"
             }
         };
 
-        // Определение языка по IP
-        async function detectLanguage() {
-            try {
-                // Используем бесплатный API для определения страны
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
+        const currencies = {
+            uk: { usd:"💵 Долар (USD)", eur:"💶 Євро (EUR)", btc:"💻 Bitcoin (BTC)", gold:"🏆 Золото (oz t)", sp500:"🌐 S&P 500" },
+            en: { usd:"💵 Dollar (USD)", eur:"💶 Euro (EUR)", btc:"💻 Bitcoin (BTC)", gold:"🏆 Gold (oz t)",   sp500:"🌐 S&P 500" }
+        };
+
+        // Коди для відображення результату. Для золота — окремо "г" для кількості
+        const codes = { usd:"USD", eur:"EUR", btc:"BTC", gold:"oz t", sp500:"S&P" };
+        const amountUnits = { usd:"USD", eur:"EUR", btc:"BTC", gold:"г", sp500:"S&P" };
+        const uahCurrencies = ['usd', 'eur'];
+
+        let currentLang = 'uk';
+        let currentTheme = 'light';
+
+        function getUnit(currency) {
+            return uahCurrencies.includes(currency) ? 'uah' : 'usd';
+        }
+
+        function fmt(n, max = 6) {
+            if (!isFinite(n) || isNaN(n)) return '—';
+            if (n >= 1000) return n.toLocaleString('uk-UA', { maximumFractionDigits: 2 });
+            return n.toLocaleString('uk-UA', { maximumFractionDigits: max });
+        }
+
+        function fillToSelect() {
+            const from = document.getElementById('fromCurrency').value;
+            const toSel = document.getElementById('toCurrency');
+            const prev = toSel.value;
+            toSel.innerHTML = '';
+            Object.keys(currencies[currentLang]).forEach(key => {
+                if (key === from) return;
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = currencies[currentLang][key];
+                toSel.appendChild(opt);
+            });
+            if (![...toSel.options].some(o => o.value === prev)) {
+                toSel.value = toSel.options[0].value;
+            } else {
+                toSel.value = prev;
+            }
+            updatePlaceholders();
+        }
+
+        function updatePlaceholders() {
+            const from = document.getElementById('fromCurrency').value;
+            const to = document.getElementById('toCurrency').value;
+            const t = translations[currentLang];
+            
+            const fromUnit = getUnit(from);
+            const toUnit = getUnit(to);
+            
+            document.getElementById('fromPrice').placeholder = fromUnit === 'uah' ? t.rateUAH : t.rateUSD;
+            document.getElementById('toPrice').placeholder = toUnit === 'uah' ? t.rateUAH : t.rateUSD;
+            
+            // Для золота кількість у грамах, для інших — у своїй валюті
+            const amountUnit = amountUnits[from];
+            document.getElementById('calcAmount').placeholder = `100 ${amountUnit}`;
+        }
+
+        function calculate() {
+            const pFrom = parseFloat(document.getElementById('fromPrice').value) || 0;
+            const pTo   = parseFloat(document.getElementById('toPrice').value) || 0;
+            const amount= parseFloat(document.getElementById('calcAmount').value) || 0;
+            const from  = document.getElementById('fromCurrency').value;
+            const to    = document.getElementById('toCurrency').value;
+            const res   = document.getElementById('calcResult');
+            const resSec= document.getElementById('calcResultSecondary');
+
+            if (pFrom <= 0 || pTo <= 0) { 
+                res.textContent = '—'; 
+                resSec.textContent = '';
+                return; 
+            }
+
+            const fromUnit = getUnit(from);
+            const toUnit = getUnit(to);
+
+            // Якщо "З" — золото, конвертуємо грами в унції для розрахунку
+            let amountInBase = amount;
+            if (from === 'gold') {
+                amountInBase = amount / GRAMS_PER_TROY_OZ; // грами -> унції
+            }
+
+            if (fromUnit === toUnit) {
+                // Однакові одиниці
+                const resultBase = amountInBase * pFrom / pTo;
                 
-                // Если пользователь из Украины - показываем украинский
-                if (data.country_code === 'UA') {
-                    return 'uk';
+                // Якщо "В" — золото, конвертуємо унції назад у грами
+                let resultDisplay = resultBase;
+                let resultUnit = codes[to];
+                if (to === 'gold') {
+                    resultDisplay = resultBase * GRAMS_PER_TROY_OZ;
+                    resultUnit = 'г';
                 }
                 
-                // Для всех остальных - английский
-                return 'en';
-            } catch (error) {
-                console.log('Language detection failed, using English');
-                return 'en'; // По умолчанию английский
+                res.textContent = fmt(resultDisplay) + ' ' + resultUnit;
+                resSec.textContent = '';
+            } else {
+                // Різні одиниці — потрібен USD як проміжна валюта
+                if (from === 'usd') {
+                    // З USD (грн) в іншу валюту ($)
+                    const uahAmount = amount * pFrom;
+                    let usdAmount = uahAmount / pTo;
+                    
+                    let displayAmount = usdAmount;
+                    let displayUnit = codes[to];
+                    if (to === 'gold') {
+                        displayAmount = usdAmount * GRAMS_PER_TROY_OZ;
+                        displayUnit = 'г';
+                    }
+                    
+                    res.textContent = fmt(displayAmount) + ' ' + displayUnit;
+                    resSec.textContent = fmt(uahAmount) + ' грн';
+                } else if (to === 'usd') {
+                    // З іншої валюти ($) в USD (грн)
+                    const usdAmount = amountInBase * pFrom;
+                    const uahAmount = usdAmount * pTo;
+                    res.textContent = fmt(usdAmount) + ' ' + codes[to];
+                    resSec.textContent = fmt(uahAmount) + ' грн';
+                } else {
+                    res.textContent = '—';
+                    resSec.textContent = '⚠️ Потрібен курс USD для конвертації';
+                }
             }
         }
 
-        // Рендеринг контента
-        function renderContent(lang) {
-            const content = translations[lang];
-            const contentDiv = document.getElementById('content');
-            
-            let featuresHTML = '';
-            content.features.forEach(feature => {
-                featuresHTML += `
-                    <div class="feature-item">
-                        <span class="feature-icon">${feature.icon}</span>
-                        <span>${feature.text}</span>
-                    </div>
-                `;
+        function bindEvents() {
+            const fromSel = document.getElementById('fromCurrency');
+            const toSel   = document.getElementById('toCurrency');
+
+            fromSel.addEventListener('change', () => {
+                fillToSelect();
+                calculate();
+            });
+            toSel.addEventListener('change', () => {
+                updatePlaceholders();
+                calculate();
             });
             
-            contentDiv.innerHTML = `
-                <h1>${content.title}</h1>
-                <p class="description">${content.description}</p>
-                
-                <div class="features">
-                    ${featuresHTML}
-                </div>
-                
-                <a href="https://t.me/kyivusd" class="telegram-btn" target="_blank">
-                    <span class="telegram-icon">✈️</span>
-                    ${content.button}
-                </a>
-            `;
-            
-            // Обновляем индикатор языка
-            document.getElementById('langIndicator').textContent = `🌍 ${content.langName}`;
-            
-            // Обновляем title страницы
-            document.title = lang === 'uk' 
-                ? 'KyivUSD - Моніторинг курсів валют' 
-                : 'KyivUSD - Currency Rate Monitoring';
+            ['fromPrice','toPrice','calcAmount'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calculate);
+            });
         }
 
-        // Запуск
-        (async function() {
-            const lang = await detectLanguage();
-            renderContent(lang);
+        function renderContent() {
+            const t = translations[currentLang];
+            let feats = '';
+            t.features.forEach(f => {
+                feats += `<div class="feature-item"><span class="feature-icon">${f.icon}</span><span>${f.text}</span></div>`;
+            });
+
+            let fromOpts = '';
+            Object.keys(currencies[currentLang]).forEach(k => {
+                fromOpts += `<option value="${k}">${currencies[currentLang][k]}</option>`;
+            });
+
+            document.getElementById('content').innerHTML = `
+                <h1>${t.title}</h1>
+                <p class="description">${t.description}</p>
+
+                <div class="calculator">
+                    <div class="calc-title">${t.calcTitle}</div>
+
+                    <div class="calc-block">
+                        <div class="calc-label">${t.from}</div>
+                        <div class="calc-row">
+                            <select id="fromCurrency" class="calc-select">${fromOpts}</select>
+                        </div>
+                        <div class="calc-row">
+                            <input type="number" step="any" id="fromPrice" class="calc-input" placeholder="${t.rateUAH}">
+                        </div>
+                    </div>
+
+                    <div class="calc-arrow">⬇</div>
+
+                    <div class="calc-block">
+                        <div class="calc-label">${t.to}</div>
+                        <div class="calc-row">
+                            <select id="toCurrency" class="calc-select"></select>
+                        </div>
+                        <div class="calc-row">
+                            <input type="number" step="any" id="toPrice" class="calc-input" placeholder="${t.rateUAH}">
+                        </div>
+                    </div>
+
+                    <div class="calc-block" style="margin-top:8px;">
+                        <input type="number" step="any" id="calcAmount" class="calc-input" placeholder="100 USD" style="width:100%;">
+                    </div>
+
+                    <div class="calc-result" id="calcResult">—</div>
+                    <div class="calc-result-secondary" id="calcResultSecondary"></div>
+                    <div class="calc-hint">${t.hint}</div>
+                </div>
+
+                <div class="features">${feats}</div>
+
+                <a href="https://t.me/kyivusd" class="telegram-btn" target="_blank">
+                    <span>✈️</span><span style="margin-left:10px;">${t.button}</span>
+                </a>
+            `;
+
+            document.getElementById('langToggle').textContent = t.langName;
+            document.title = currentLang === 'uk' ? 'KyivUSD — Калькулятор валют' : 'KyivUSD — Currency Calculator';
+
+            fillToSelect();
+            updatePlaceholders();
+            bindEvents();
+            calculate();
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            document.getElementById('themeToggle').textContent = currentTheme === 'light' ? '🌙' : '☀️';
+        });
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            currentLang = currentLang === 'uk' ? 'en' : 'uk';
+            renderContent();
+        });
+
+        (async function () {
+            try {
+                const r = await fetch('https://ipapi.co/json/');
+                const d = await r.json();
+                currentLang = d.country_code === 'UA' ? 'uk' : 'en';
+            } catch (e) { currentLang = 'uk'; }
+            renderContent();
         })();
     </script>
 </body>
